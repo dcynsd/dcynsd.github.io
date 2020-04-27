@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>学习笔记 - Redis bind</title>
+    <link href="/posts/41787.html"/>
+    <url>/posts/41787.html</url>
+    
+    <content type="html"><![CDATA[<p>最近公司需要多台服务器通过内网 IP 连接 Redis 服务器，于是看了下 Redis 的配置文件，其描述的是：如果要让其它主机连接到 Redis，需要配置 <code>bind</code> 参数，指定主机的 IP 地址，格式如下：</p><pre><code>#bind 0.0.0.0 # 所有 IP 地址都可以连接，线上环境最好指定 IP 地址访问bind 127.0.0.1 122.33.21.21 # 指定的 IP 地址才能连接，多个 IP 用空格隔开</code></pre><p>配置完成，重启 Redis 服务器，发现其它服务器连接是拒绝访问的，这是怎么回事呢？通过一系列摸索，终于找到问题原因：</p><p>原来 <code>bind</code> 参数表示的是指定本机可以接受连接的网卡地址，比如 Redis 服务器自身有一个公网 IP (112.23.56.21)，内网 IP (192.168.0.1)，如果 Redis 服务器需要被本机及以外的服务器访问（比如说内网服务器），那么配置就是：</p><pre><code>bind 127.0.0.1 192.168.0.1</code></pre><p>这个配置就表示该 Redis 使用该 IP 来接受外部的连接。</p><p><strong>注意：<code>bind</code> 的意思不是绑定外部服务器的 IP，而是绑定本机可以接受访问的 IP</strong></p><p>如果改完还不能生效，可以在配置文件中将 Redis 保护模式关闭，但记得使用密码来保证安全性（使用复杂密码）。</p><pre><code>protected-mode norequirepass #&amp;g&gt;TeQcAWF;${rz</code></pre>]]></content>
+    
+    
+    <categories>
+      
+      <category>学习笔记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Redis</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Composer Package - 获取网易云音乐歌单</title>
+    <link href="/posts/15157.html"/>
+    <url>/posts/15157.html</url>
+    
+    <content type="html"><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>学习了 <a href="https://overtrue.me" target="_blank" rel="noopener">overtrue</a> 大神写的扩展包开发教程后，就自己动手尝试写了一个简易的获取网易云音乐歌单的扩展，有兴趣的朋友可以 <a href="https://learnku.com/courses/creating-package?rf=18572" target="_blank" rel="noopener">点此</a> 去学习扩展开发</p><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><pre><code>composer require dcynsd/music -vvv</code></pre><h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>在使用本扩展之前，你需要去 网易云音乐 获取到需要的歌单 ID。</p><p><img src="https://imgur.com/XTxMtlT.jpg" srcset="/img/loading.gif" alt="music163"></p><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><pre><code class="php">use Dcynsd\Music\Music;$music = new Music();$songList = $music-&gt;getSongList(&#39;3195542093&#39;);</code></pre><h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><pre><code>getSongList(string $song_list_id, bool $lrc = false)1. $song_list_id：歌单 ID2. $lrc：是否需要歌词</code></pre><h2 id="在-Laravel-中使用"><a href="#在-Laravel-中使用" class="headerlink" title="在 Laravel 中使用"></a>在 Laravel 中使用</h2><p>可以用两种方式来获取 Dcynsd\Music\Music 实例：</p><h3 id="方法参数注入"><a href="#方法参数注入" class="headerlink" title="方法参数注入"></a>方法参数注入</h3><pre><code class="php">public function index(Music $music) {    $response = $music-&gt;getSongList(&#39;3195542093&#39;);}</code></pre><h3 id="服务名访问"><a href="#服务名访问" class="headerlink" title="服务名访问"></a>服务名访问</h3><pre><code class="php">public function index() {    $response = app(&#39;music&#39;)-&gt;getSongList(&#39;3195542093&#39;);}</code></pre><h2 id="返回结果"><a href="#返回结果" class="headerlink" title="返回结果"></a>返回结果</h2><p><img src="https://imgur.com/VnOcg8o.jpg" srcset="/img/loading.gif" alt="list"></p><p>最后附上 GitHub 地址</p><p><a href="https://github.com/dcynsd/music" target="_blank" rel="noopener">dcynsd/music</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术分享</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Composer Package</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>学习笔记 - HTTP</title>
+    <link href="/posts/58393.html"/>
+    <url>/posts/58393.html</url>
+    
+    <content type="html"><![CDATA[<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>HTTP 就是 <code>超文本传输协议</code>，英文全称 <code>HyperText Transfer Protocol</code></p><p>超文本指的是 <code>HTML、CSS、JavaScript 和 图片</code> 等，HTTP 的出现是为了接收和发布 HTML 页面，经过不断发展也可以接收音频、视频和文件等内容。</p><p>HTTP 协议是基于 <code>TCP/IP</code> 协议的一种应用层协议，用于客户端和服务端之间的通信</p><p>客户端通过 <code>URL</code> 地址向服务端发出请求，服务端在接收到请求后发出响应</p><h2 id="HTTP-的特点"><a href="#HTTP-的特点" class="headerlink" title="HTTP 的特点"></a>HTTP 的特点</h2><p>HTTP 都是由客户端发起请求，并且由服务器端响应消息的。</p><p><code>灵活</code>：HTTP 允许传输任何类型的数据对象，包括音频，视频，图片，文件等。</p><p><code>无连接</code>：每次连接只处理一个请求，服务端处理完客户端的请求，并收到客户端的应答后，即断开连接，采用这种方式可以节省传输时间。</p><p><code>无状态</code>：对于事务处理没有记忆能力，缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。</p><p>每个 TCP 连接的建立成本很高，因为需要客户端和服务端三次握手。</p><p>HTTP1.1 版本可以持久连接，TCP 连接默认不关闭，可以被多个请求复用，只有在一段时间内，没有请求，就可以自动关闭。</p><h2 id="HTTP-消息结构"><a href="#HTTP-消息结构" class="headerlink" title="HTTP 消息结构"></a>HTTP 消息结构</h2><p>一个请求的消息结构是由 <code>请求行、请求头、空行和消息主体</code> 组成</p><p>客户端请求：</p><pre><code>GET /index.html HTTP/1.1Host: 127.0.0.1Accept: text/html,application/xhtml+xmlAccept-Language: zh-CNConnection: keep-aliveUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)...</code></pre><p>服务端响应：</p><pre><code>HTTP/1.1 200 OKDate: Tue, 17 Jul ...Content.Length: 362Content.Type: text/html&lt;html&gt;...</code></pre><h2 id="HTTP-状态码"><a href="#HTTP-状态码" class="headerlink" title="HTTP 状态码"></a>HTTP 状态码</h2><p>HTTP 状态码作用是服务端用来告诉客户端，当前的请求发生什么事情了，或者是当前服务端的响应状态。</p><p>常用状态码：</p><table><thead><tr><th>状态码</th><th>释义</th></tr></thead><tbody><tr><td>200</td><td>服务端响应成功</td></tr><tr><td>201</td><td>客户端向服务端请求并创建了新的资源</td></tr><tr><td>204</td><td>服务端处理成功，但没有内容返回</td></tr><tr><td>301</td><td>永久移动，客户端请求的资源以被永久的移动到新的地址，返回信息会包括新的地址，浏览器会自动重定向到新的地址</td></tr><tr><td>302</td><td>临时移动，与 301 状态类似，但是资源只是临时被移动，客户端应继续使用原有地址</td></tr><tr><td>400</td><td>客户端请求错误，服务器不理解</td></tr><tr><td>401</td><td>请求需要身份认证</td></tr><tr><td>403</td><td>服务端接收到请求，但是拒绝执行</td></tr><tr><td>404</td><td>服务端无法找到客户端所需要的的资源</td></tr><tr><td>405</td><td>请求的方法被禁止</td></tr><tr><td>422</td><td>请求格式正确，但是由于含有语义错误，无法响应</td></tr><tr><td>429</td><td>客户端在给定的时间内发送了太多的请求</td></tr><tr><td>500</td><td>服务器内部错误</td></tr><tr><td>502</td><td>网关或代理的服务器错误，远端服务器接收到无效的响应</td></tr><tr><td>503</td><td>由于超载或系统维护，服务端暂时无法处理客户端的请求</td></tr><tr><td>504</td><td>网关或代理的服务器，未及时从远端服务器获取响应</td></tr></tbody></table>]]></content>
+    
+    
+    <categories>
+      
+      <category>学习笔记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>HTTP</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="/posts/16107.html"/>
+    <url>/posts/16107.html</url>
+    
+    <content type="html"><![CDATA[<pre><code>Hello World</code></pre>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  
+</search>
